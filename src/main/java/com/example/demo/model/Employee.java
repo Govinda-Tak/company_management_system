@@ -68,7 +68,7 @@ public class Employee extends BaseModel {
 	private Department department;
 	
 	@ManyToMany
-	@JoinTable(name = "projects_employees",joinColumns = @JoinColumn(name="project_id",nullable = false),inverseJoinColumns = @JoinColumn(name="employee_id",nullable = false))
+	@JoinTable(name = "projects_employees",joinColumns = @JoinColumn(name="employee_id",nullable = false),inverseJoinColumns = @JoinColumn(name="project_id",nullable = false))
 	private List<Project> project;
 	
 	@Embedded

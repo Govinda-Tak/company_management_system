@@ -26,4 +26,14 @@ public class FullProjectResponseDto {
 	private List<DepartmentResponseDto> department;
 	
 	private List<EmployeeResponseDto> employee;
+
+	public FullProjectResponseDto(Long id, String name, LocalDate startDate, LocalDate endDate) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
+	}
+	
+	
 }
