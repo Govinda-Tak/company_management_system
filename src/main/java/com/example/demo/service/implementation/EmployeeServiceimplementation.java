@@ -61,7 +61,7 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 		// TODO Auto-generated method stub
 		Employee emp=employeeDao.findById(id).orElseThrow(()->new ResourceNotFoundException("No Any Employee registered with this id :: "+id));
 		List<ProjectResponseDto> pList=new ArrayList<>();
-		emp.getProject().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
+		emp.getProjects().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
 		return new ResponseEntity<List<ProjectResponseDto>>(pList,HttpStatus.OK);
 	}
 
@@ -104,7 +104,7 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 	fEmp.setName(emp.getName());
 
 	List<ProjectResponseDto>pList=new ArrayList<>();
-	emp.getProject().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
+	emp.getProjects().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
 	fEmp.setProject(pList);
 		return new ResponseEntity<FullEmployeeResponse>(fEmp,HttpStatus.OK);
 	}

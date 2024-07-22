@@ -7,8 +7,11 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 
 import com.example.demo.Dto.request.DepartmentRequestDto;
+import com.example.demo.Dto.response.DetailedProjectResponseDto;
 import com.example.demo.Dto.response.FullDepartmentResponse;
+
 import com.example.demo.model.Department;
+import com.example.demo.model.Project;
 
 
 @org.springframework.context.annotation.Configuration
@@ -43,5 +46,13 @@ public class ModelMapperConfig {
                              mapper.skip(Department::getProject, FullDepartmentResponse::setProject);
                              // Ensure ID is not overwritten
                          });
+    }
+    @Bean
+    public TypeMap<Project, DetailedProjectResponseDto> detailedProjectMapper(ModelMapper modelMapper)
+    {
+    	return modelMapper.createTypeMap(Project.class, DetailedProjectResponseDto.class)
+    			.addMappings(mapper->{mapper.skip(Project::getEmployees, DetailedProjectResponseDto::setEmployee);
+    			mapper.skip(Project::getDepartment,DetailedProjectResponseDto::setDepartment);
+    			});
     }
 }

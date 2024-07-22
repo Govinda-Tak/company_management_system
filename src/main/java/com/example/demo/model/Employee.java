@@ -37,7 +37,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"project"})
+@ToString(exclude = {"projects"})
 public class Employee extends BaseModel {
 	@NotBlank(message = "Employee name required !!")
 	@Column(nullable = false)
@@ -68,8 +68,8 @@ public class Employee extends BaseModel {
 	private Department department;
 	
 	@ManyToMany
-	@JoinTable(name = "projects_employees",joinColumns = @JoinColumn(name="project_id",nullable = false),inverseJoinColumns = @JoinColumn(name="employee_id",nullable = false))
-	private List<Project> project;
+	@JoinTable(name = "projects_employees",joinColumns = @JoinColumn(name="employee_id",nullable = false),inverseJoinColumns = @JoinColumn(name="project_id",nullable = false))
+	private List<Project> projects;
 	
 	@Embedded
 	private Address address;

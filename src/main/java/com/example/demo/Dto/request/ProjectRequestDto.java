@@ -35,10 +35,7 @@ public class ProjectRequestDto {
 	private LocalDate endDate;
 	
 	
-	private List<Long> employeeId;
 	
-	
-	private List<Long> departmentId;
 	
 	
 	
