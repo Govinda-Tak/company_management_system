@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(exclude = {"department","employee"})
-public class FullProjectResponseDto {
+public class DetailedProjectResponseDto {
 
 	private Long id;
 	private String name;
@@ -27,7 +27,7 @@ public class FullProjectResponseDto {
 	
 	private List<EmployeeResponseDto> employee;
 
-	public FullProjectResponseDto(Long id, String name, LocalDate startDate, LocalDate endDate) {
+	public DetailedProjectResponseDto(Long id, String name, LocalDate startDate, LocalDate endDate) {
 		super();
 		this.id = id;
 		this.name = name;

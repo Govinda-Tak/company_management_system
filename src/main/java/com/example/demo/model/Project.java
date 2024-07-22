@@ -23,7 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"employee","department"})
+@ToString(exclude = {"employees","department"})
 public class Project extends BaseModel {
 	@jakarta.validation.constraints.NotBlank(message = "project name required !!")
 	@Length(min = 2,max = 200,message = "project name length in between 2 and 200 character !!")
@@ -35,8 +35,8 @@ public class Project extends BaseModel {
 	@FutureOrPresent(message = "prroject ending date must be in future or present !!")
 	private LocalDate endDate;
 	
-	@ManyToMany(mappedBy = "project")
-	private List<Employee> employee;
+	@ManyToMany(mappedBy = "projects")
+	private List<Employee> employees;
 	
 	@ManyToMany(mappedBy = "project")
 	private List<Department> department;
@@ -60,13 +60,13 @@ public class Project extends BaseModel {
 	
 	public void addEmployee(Employee emp)
 	{
-		this.getEmployee().add(emp);
-		emp.getProject().add(this);
+		this.getEmployees().add(emp);
+		emp.getProjects().add(this);
 	}
 	public void removeEmployee(Employee emp)
 	{
-		this.getEmployee().remove(emp);
-		emp.getProject().remove(this);
+		this.getEmployees().remove(emp);
+		emp.getProjects().remove(this);
 	}
 	
 	

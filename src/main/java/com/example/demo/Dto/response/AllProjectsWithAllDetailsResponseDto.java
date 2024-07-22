@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString
 public class AllProjectsWithAllDetailsResponseDto {
 	
-	private List<FullProjectResponseDto> projectList;
+	private List<DetailedProjectResponseDto> projectList;
 	private  AllProjectsWithAllDetailsResponseDto.PageInformation pageInfo; 
 	
 

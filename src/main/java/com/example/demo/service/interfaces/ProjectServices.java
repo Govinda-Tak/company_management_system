@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import com.example.demo.Dto.request.ProjectRequestDto;
 import com.example.demo.Dto.response.AllProjectsWithAllDetailsResponseDto;
 import com.example.demo.Dto.response.DepartmentResponseDto;
+import com.example.demo.Dto.response.DetailedProjectResponseDto;
 import com.example.demo.Dto.response.EmployeeResponseDto;
-import com.example.demo.Dto.response.FullProjectResponseDto;
 import com.example.demo.Dto.response.ProjectResponseDto;
 
 public interface ProjectServices {
@@ -34,6 +34,6 @@ public interface ProjectServices {
 	
 	public ResponseEntity<List<ProjectResponseDto>> getProjectsByStartingDate(LocalDate startingDate);
 
-	public ResponseEntity<FullProjectResponseDto> getCompleteDetailsOfProject(Long id);
+	public ResponseEntity<DetailedProjectResponseDto> getCompleteDetailsOfProject(Long id);
 	public ResponseEntity<AllProjectsWithAllDetailsResponseDto> getCompleteDetailsOfProjects(int page,int size);
 }

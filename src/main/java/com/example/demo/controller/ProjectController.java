@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.demo.Dto.request.ProjectRequestDto;
 import com.example.demo.Dto.response.AllProjectsWithAllDetailsResponseDto;
 import com.example.demo.Dto.response.DepartmentResponseDto;
+import com.example.demo.Dto.response.DetailedProjectResponseDto;
 import com.example.demo.Dto.response.EmployeeResponseDto;
-import com.example.demo.Dto.response.FullProjectResponseDto;
 import com.example.demo.Dto.response.ProjectResponseDto;
 import com.example.demo.service.interfaces.ProjectServices;
 
@@ -75,7 +75,7 @@ public ResponseEntity<ProjectResponseDto> getProject(@PathVariable long id)
 		return projectServices.getProjectsByStartingDate(startingDate);
 	}
 	@GetMapping("/complete-details/{id}")
-	public ResponseEntity<FullProjectResponseDto> getCompleteDetailsOfProject(@PathVariable("id") long id)
+	public ResponseEntity<DetailedProjectResponseDto> getCompleteDetailsOfProject(@PathVariable("id") long id)
 	{
 		return projectServices.getCompleteDetailsOfProject(id);
 	}

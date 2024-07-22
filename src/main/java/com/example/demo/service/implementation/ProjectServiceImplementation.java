@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 import com.example.demo.Dto.request.ProjectRequestDto;
 import com.example.demo.Dto.response.AllProjectsWithAllDetailsResponseDto;
 import com.example.demo.Dto.response.DepartmentResponseDto;
+import com.example.demo.Dto.response.DetailedProjectResponseDto;
 import com.example.demo.Dto.response.EmployeeResponseDto;
-import com.example.demo.Dto.response.FullProjectResponseDto;
 import com.example.demo.Dto.response.ProjectResponseDto;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.Department;
@@ -40,7 +40,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 	@Autowired
 	private ModelMapper map;
 	@Autowired
-	private TypeMap<Project, FullProjectResponseDto> projectToFullProjectMapper;
+	private TypeMap<Project, DetailedProjectResponseDto> detailedProjectMapper;
 	@Autowired
 	private EmployeeRepository employeeDao;
 	@Autowired
@@ -67,7 +67,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 		// TODO Auto-generated method stub
 		List<EmployeeResponseDto>eList=new ArrayList<>();
 		Project project=projectdao.findById(id).orElseThrow(()->new ResourceNotFoundException("No any Project registered with this id ::"+id));
-		project.getEmployee().forEach(e->eList.add(map.map(e, EmployeeResponseDto.class)));
+		project.getEmployees().forEach(e->eList.add(map.map(e, EmployeeResponseDto.class)));
 		return new ResponseEntity<List<EmployeeResponseDto>>(eList,HttpStatus.OK);
 	
 	
@@ -86,7 +86,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 		// TODO Auto-generated method stub
 		Project project=projectdao.findById(id).orElseThrow(()->new ResourceNotFoundException("No any Project registered with this id ::"+id));
 //	project.getEmployee().forEach(e->project.removeEmployee(e));
-		List<Employee>eList=project.getEmployee();
+		List<Employee>eList=project.getEmployees();
 		for(int i=0;i<eList.size();i++)
 		{
 			project.removeEmployee(eList.get(i));
@@ -123,16 +123,16 @@ public class ProjectServiceImplementation implements ProjectServices {
 	}
 
 	@Override
-	public ResponseEntity<FullProjectResponseDto> getCompleteDetailsOfProject(Long id) {
+	public ResponseEntity<DetailedProjectResponseDto> getCompleteDetailsOfProject(Long id) {
 		// TODO Auto-generated method stub
 	Project project=projectdao.findById(id).orElseThrow(()->new ResourceNotFoundException("No any project registered with this id ::"+id));
 	//project.getEmployee().forEach(e->e.getName());
-	   FullProjectResponseDto response= projectToFullProjectMapper.map(project);
-	   List<EmployeeResponseDto>eList=project.getEmployee().stream().map(emp->map.map(emp, EmployeeResponseDto.class)).collect(Collectors.toList());
+	DetailedProjectResponseDto response= detailedProjectMapper.map(project);
+	   List<EmployeeResponseDto>eList=project.getEmployees().stream().map(emp->map.map(emp, EmployeeResponseDto.class)).collect(Collectors.toList());
 	   List<DepartmentResponseDto>dList=project.getDepartment().stream().map(dept->map.map(dept, DepartmentResponseDto.class)).collect(Collectors.toList());
 	   response.setDepartment(dList);
 	   response.setEmployee(eList);
-		return new ResponseEntity<FullProjectResponseDto>(response,HttpStatus.OK);
+		return new ResponseEntity<DetailedProjectResponseDto>(response,HttpStatus.OK);
 	}
 
 	@Override
@@ -140,7 +140,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 		// TODO Auto-generated method stub
 		Pageable pageInfo=PageRequest.of(pageNumber, size, Sort.by("startDate").ascending().and(Sort.by("endDate").ascending()));
 	Page<Project> page=	projectdao.findAll(pageInfo);
-List<FullProjectResponseDto>pList=	page.getContent().stream().map(project->projectToFullProjectMapper.map(project)).collect(Collectors.toList());
+List<DetailedProjectResponseDto>pList=	page.getContent().stream().map(project->detailedProjectMapper.map(project)).collect(Collectors.toList());
 // Map departments for each project
 List<List<DepartmentResponseDto>> dList = page.getContent().stream()
         .map(project -> project.getDepartment().stream()
@@ -150,15 +150,15 @@ List<List<DepartmentResponseDto>> dList = page.getContent().stream()
 
 // Map employees for each project
 List<List<EmployeeResponseDto>> eList = page.getContent().stream()
-        .map(project -> project.getEmployee().stream()
+        .map(project -> project.getEmployees().stream()
                 .map(emp -> map.map(emp, EmployeeResponseDto.class))
                 .collect(Collectors.toList()))
         .collect(Collectors.toList());
 // Set departments and employees for each project
-for (int i = 0; i < pList.size(); i++) {
-    FullProjectResponseDto fullProject = pList.get(i);
-    fullProject.setDepartment(dList.get(i));
-    fullProject.setEmployee(eList.get(i));
+for (int pIndex = 0; pIndex < pList.size(); pIndex++) {
+	DetailedProjectResponseDto fullProject = pList.get(pIndex);
+    fullProject.setDepartment(dList.get(pIndex));
+    fullProject.setEmployee(eList.get(pIndex));
 }
 
 // Prepare page information
