@@ -58,7 +58,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 		// TODO Auto-generated method stub
 		List<DepartmentResponseDto>dList=new ArrayList<>();
 		Project project=projectdao.findById(id).orElseThrow(()->new ResourceNotFoundException("No any Project registered with this id ::"+id));
-		project.getDepartment().forEach(d->dList.add(map.map(d, DepartmentResponseDto.class)));
+		project.getDepartments().forEach(d->dList.add(map.map(d, DepartmentResponseDto.class)));
 		return new ResponseEntity<List<DepartmentResponseDto>>(dList,HttpStatus.OK);
 	}
 
@@ -91,7 +91,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 		{
 			project.removeEmployee(eList.get(i));
 		}
-	List<Department>dList=project.getDepartment();
+	List<Department>dList=project.getDepartments();
 	for(int j=0;dList.size()>j;j++)
 	{
 		dList.get(j).removeProject(project);
@@ -129,7 +129,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 	//project.getEmployee().forEach(e->e.getName());
 	DetailedProjectResponseDto response= detailedProjectMapper.map(project);
 	   List<EmployeeResponseDto>eList=project.getEmployees().stream().map(emp->map.map(emp, EmployeeResponseDto.class)).collect(Collectors.toList());
-	   List<DepartmentResponseDto>dList=project.getDepartment().stream().map(dept->map.map(dept, DepartmentResponseDto.class)).collect(Collectors.toList());
+	   List<DepartmentResponseDto>dList=project.getDepartments().stream().map(dept->map.map(dept, DepartmentResponseDto.class)).collect(Collectors.toList());
 	   response.setDepartment(dList);
 	   response.setEmployee(eList);
 		return new ResponseEntity<DetailedProjectResponseDto>(response,HttpStatus.OK);
@@ -143,7 +143,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 List<DetailedProjectResponseDto>pList=	page.getContent().stream().map(project->detailedProjectMapper.map(project)).collect(Collectors.toList());
 // Map departments for each project
 List<List<DepartmentResponseDto>> dList = page.getContent().stream()
-        .map(project -> project.getDepartment().stream()
+        .map(project -> project.getDepartments().stream()
                 .map(dept -> map.map(dept, DepartmentResponseDto.class))
                 .collect(Collectors.toList()))
         .collect(Collectors.toList());
@@ -155,10 +155,10 @@ List<List<EmployeeResponseDto>> eList = page.getContent().stream()
                 .collect(Collectors.toList()))
         .collect(Collectors.toList());
 // Set departments and employees for each project
-for (int pIndex = 0; pIndex < pList.size(); pIndex++) {
-	DetailedProjectResponseDto fullProject = pList.get(pIndex);
-    fullProject.setDepartment(dList.get(pIndex));
-    fullProject.setEmployee(eList.get(pIndex));
+for (int pindex = 0; pindex < pList.size(); pindex++) {
+	DetailedProjectResponseDto fullProject = pList.get(pindex);
+    fullProject.setDepartment(dList.get(pindex));
+    fullProject.setEmployee(eList.get(pindex));
 }
 
 // Prepare page information

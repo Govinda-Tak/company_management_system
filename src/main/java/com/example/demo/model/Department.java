@@ -1,13 +1,9 @@
 package com.example.demo.model;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +24,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString(exclude = {"employee","project"})
+@ToString(exclude = {"employees","projects"})
 public class Department extends BaseModel {
 	
 	
@@ -37,11 +33,11 @@ public class Department extends BaseModel {
 	@Length(min = 2,max = 200,message = "department length should be >=2 and <= 200 character !!")
 	private String name;
 	@OneToMany(mappedBy = "department",cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
-	private List<Employee> employee; 
+	private List<Employee> employees; 
 	
 	@ManyToMany
 	@JoinTable(name = "departments_projects",joinColumns = @JoinColumn(name="project_id",nullable = false),inverseJoinColumns = @JoinColumn(name="department_id",nullable = false))
-	private List<Project> project;
+	private List<Project> projects;
 
 
 
@@ -61,24 +57,24 @@ public class Department extends BaseModel {
 	//Bi-directional binding for employee_department
 	public void addEmployee(Employee newEmployee)
 	{
-		employee.add(newEmployee);
+		employees.add(newEmployee);
 		newEmployee.setDepartment(this);
 	}
 	public void removeEmployee(Employee oldEmployee)
 	{
-		employee.remove(oldEmployee);
+		employees.remove(oldEmployee);
 		oldEmployee.setDepartment(null);
 	}
 	
 	//Bi-directional binding for project_department
 		public void addProject(Project newProject)
 		{
-			project.add(newProject);
-			newProject.getDepartment().add(this);
+			projects.add(newProject);
+			newProject.getDepartments().add(this);
 		}
 		public void removeProject(Project oldProject)
 		{
-			project.remove(oldProject);
-			oldProject.getDepartment().remove(this);
+			projects.remove(oldProject);
+			oldProject.getDepartments().remove(this);
 		}
 }

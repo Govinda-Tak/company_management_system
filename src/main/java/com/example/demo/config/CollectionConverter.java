@@ -1,11 +1,11 @@
 package com.example.demo.config;
 
-import org.modelmapper.Converter;
-import org.modelmapper.spi.MappingContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import org.modelmapper.Converter;
+import org.modelmapper.spi.MappingContext;
 
 public class CollectionConverter<S, D> implements Converter<Collection<S>, List<D>> {
 

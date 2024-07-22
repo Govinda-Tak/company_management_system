@@ -1,16 +1,14 @@
 package com.example.demo.Dto.request;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.model.Address;
 import com.example.demo.model.enums.Designation;
 import com.example.demo.util.annotation.ValidDateOfBirth;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -67,4 +65,8 @@ public class EmployeeRequestDto {
 	
 	@Pattern(regexp = "^[1-9][0-9]{5}$")
 	private String pinCode;
+	
+	private MultipartFile profilePicture;
+	
 }
+
