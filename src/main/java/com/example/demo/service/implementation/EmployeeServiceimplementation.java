@@ -118,4 +118,10 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 		return new ResponseEntity<FullEmployeeResponse>(fEmp,HttpStatus.OK);
 	}
 
+	@Override
+	public Employee getUser(String emailId) {
+		// TODO Auto-generated method stub
+		return employeeDao.findByEmail(emailId).orElseThrow(()->new ResourceNotFoundException("No any user registered with this email id ::"+emailId));
+	}
+
 }

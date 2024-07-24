@@ -8,6 +8,7 @@ import com.example.demo.Dto.request.EmployeeRequestDto;
 import com.example.demo.Dto.response.EmployeeResponseDto;
 import com.example.demo.Dto.response.FullEmployeeResponse;
 import com.example.demo.Dto.response.ProjectResponseDto;
+import com.example.demo.model.Employee;
 
 public interface EmployeeService {
 	
@@ -24,5 +25,8 @@ public interface EmployeeService {
 	public ResponseEntity<EmployeeResponseDto> TransferEmployee(Long empId,Long deptId);
 	
 	public ResponseEntity<FullEmployeeResponse> getCompleteDetailsOfEmployee(Long id);
+	
+	public Employee getUser(String emailId);
+	
 
 }
