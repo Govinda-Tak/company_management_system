@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,6 +25,8 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JWTRequestFilter extends OncePerRequestFilter {
 	@Autowired
 	private JwtUtils utils;
+	@Autowired
+	private CustomUserDetailsServiceImpl userService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -32,21 +36,34 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 		if (authHeadr != null && authHeadr.startsWith("Bearer")) {
 			System.out.println("got bearer token");
 			String token = authHeadr.substring(7);
-			Claims claims = utils.validateJwtToken(token);
+			System.out.println(token);
+			try {			UserDetails user=userService.loadUserByUsername(utils.getUsernameFromToken(token));
+			System.out.println(user);
+			if( utils.validateToken(token,user))
 			// extract subject from the token
-			String email = utils.getUserNameFromJwtToken(claims);
-			// extract authorities from the token
-			List<GrantedAuthority> authorities = utils.getAuthoritiesFromClaims(claims);
-			// wrap user details (username/email +granted authorities ) in the
-			// username pwd token
+			{
+		System.out.println("hello....");
 			UsernamePasswordAuthenticationToken authentication = 
-					new UsernamePasswordAuthenticationToken(email, null,
-					authorities);
+					new UsernamePasswordAuthenticationToken(user, null,
+					user.getAuthorities());
+			System.out.println(authentication);
 			//save above auth object in the spring sec ctx
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			System.out.println("end of filter !!");
+			}
+			
+			else
+			{
+				throw new BadCredentialsException("Token not valid !!");
+			}}catch(Exception e)
+			{
+				System.out.println("in filter exception !! ::"+e.getMessage());
+				throw new RuntimeException(e.getMessage());
+			}
 			
 		} else
 			System.out.println("req did not contain any bearer token");
+		System.out.println("calling to next filter !!!");
 		filterChain.doFilter(request, response);// passing the control to the nexyt filter in the chain
 
 	}

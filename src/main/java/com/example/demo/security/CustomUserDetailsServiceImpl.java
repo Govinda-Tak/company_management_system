@@ -21,6 +21,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// invoke dao's method to get uer details form DB
+		System.out.println("in load user by user name !!!");
 		Employee user = userRepo.findByEmail(email)
 				.orElseThrow(() ->
 				new UsernameNotFoundException("Invalid Email !!!!!"));

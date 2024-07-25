@@ -37,6 +37,7 @@ public class EmpAuthController {
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<EmployeeResponseDto> registerEmployee(@ModelAttribute @Valid EmployeeRequestDto newEmployee)
 		{
+		System.out.println("registration ...");
 			return userService.addEmployee(newEmployee);
 		}
 
@@ -52,7 +53,7 @@ public class EmpAuthController {
 		org.springframework.security.core.Authentication principal = mgr
 				.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 		// generate JWTS
-		String jwtToken = utils.generateJwtToken(principal);
+		String jwtToken = utils.generateToken(request.getEmail());
 		return ResponseEntity.ok(new SigninResponse(jwtToken, "User authentication success!!!"));
 	}
 }

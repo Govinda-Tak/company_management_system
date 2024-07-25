@@ -59,7 +59,6 @@ public class Employee extends BaseModel {
 	private String email;
 	
 	@NotBlank(message = "password required !!")
-	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
 	private String password;
 	@URL(message = "image url required !!")
 	private String image;

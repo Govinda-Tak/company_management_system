@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.demo.model.Employee;
 
+
 public class CustomUserDetails implements UserDetails {
 	private Employee emp;
 	

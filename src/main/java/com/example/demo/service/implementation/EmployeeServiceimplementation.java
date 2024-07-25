@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Dto.request.EmployeeRequestDto;
@@ -35,6 +36,8 @@ public class EmployeeServiceimplementation implements EmployeeService {
 	private ModelMapper map;
 	@Autowired
 	private Utility utility; 
+	@Autowired
+	private PasswordEncoder encoder;
 
 	@Override
 	public ResponseEntity<EmployeeResponseDto> getEmployee(Long id) {
@@ -82,6 +85,7 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 		Address address=new Address(newEmployee.getAddress(),newEmployee.getState(),newEmployee.getCountry(),newEmployee.getPinCode());
 		String imageUrl=utility.uploadImage(newEmployee.getProfilePicture());
 		Employee emp=new Employee(newEmployee.getName(),newEmployee.getContactNo(),newEmployee.getDateOfBirth(),newEmployee.getDesignation(),newEmployee.getEmail(),newEmployee.getPassword(),address,imageUrl);
+		emp.setPassword(encoder.encode(emp.getPassword()));
 		System.out.println(emp+" ... in emp service create !!");
 		dept.addEmployee(emp);
 		employeeDao.save(emp);
