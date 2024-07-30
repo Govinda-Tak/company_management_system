@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Dto.request.ProjectRequestDto;
 import com.example.demo.Dto.response.AllProjectsWithAllDetailsResponseDto;
@@ -26,7 +27,7 @@ import com.example.demo.service.interfaces.ProjectServices;
 
 import jakarta.validation.Valid;
 @RequestMapping("/api/project")
-@Controller
+@RestController
 public class ProjectController {
 	@Autowired
 	private ProjectServices projectServices;
@@ -48,17 +49,20 @@ public ResponseEntity<ProjectResponseDto> getProject(@PathVariable long id)
 		return projectServices.getEmployees(id);
 	}
 	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProjectResponseDto> updateProject(@PathVariable("id") long id,@RequestBody ProjectRequestDto project)
 	{
 		return projectServices.updateProject(id, project);
 	}
 	
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProjectResponseDto> removeProject(@PathVariable("id") long id)
 	{
 		return projectServices.removeProject(id);
 	}
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ProjectResponseDto> registerProject(@RequestBody @Valid ProjectRequestDto newProject)
 	{
 		return projectServices.registerProject(newProject);
@@ -85,11 +89,13 @@ public ResponseEntity<ProjectResponseDto> getProject(@PathVariable long id)
 		return projectServices.getCompleteDetailsOfProjects(page, size);
 	}
 	@PutMapping("/add-employee/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<String> addEmployee(@PathVariable("id") long id,@RequestParam(value = "empId",required = true) long empId)
 	{
 		return projectServices.addEmployee(id, empId);
 	}
 	@PutMapping("/add-department/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<String> addDepartment(@PathVariable("id") long id,@RequestParam(value = "deptId",required = true) long deptId)
 	{
 		return projectServices.addDepartment(id, deptId);
