@@ -1,11 +1,10 @@
 package com.example.demo.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.validator.constraints.Length;
-import org.springframework.format.annotation.DateTimeFormat;
+import org.hibernate.validator.constraints.URL;
 
 import com.example.demo.model.enums.Designation;
 import com.example.demo.util.annotation.ValidDateOfBirth;
@@ -37,7 +36,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString(exclude = {"project"})
+@ToString(exclude = {"projects"})
 public class Employee extends BaseModel {
 	@NotBlank(message = "Employee name required !!")
 	@Column(nullable = false)
@@ -60,16 +59,19 @@ public class Employee extends BaseModel {
 	private String email;
 	
 	@NotBlank(message = "password required !!")
-	@Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")
 	private String password;
+	@URL(message = "image url required !!")
+	private String image;
 	
 	@ManyToOne
 	@JoinColumn(name = "department_id",nullable = false)
 	private Department department;
 	
+	
+	
 	@ManyToMany
-	@JoinTable(name = "projects_employees",joinColumns = @JoinColumn(name="project_id",nullable = false),inverseJoinColumns = @JoinColumn(name="employee_id",nullable = false))
-	private List<Project> project;
+	@JoinTable(name = "projects_employees",joinColumns = @JoinColumn(name="employee_id",nullable = false),inverseJoinColumns = @JoinColumn(name="project_id",nullable = false))
+	private List<Project> projects;
 	
 	@Embedded
 	private Address address;
@@ -81,7 +83,7 @@ public class Employee extends BaseModel {
 			@NotNull(message = "designation required !!") Designation designation,
 			@NotBlank(message = "email required !!") @Email String email,
 			@NotBlank(message = "password required !!") @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$") String password,
-			Address address) {
+			Address address,String imageUrl) {
 		super();
 		this.name = name;
 		this.contactNo = contactNo;
@@ -90,7 +92,7 @@ public class Employee extends BaseModel {
 		this.email = email;
 		this.password = password;
 		this.address = address;
-		
+		this.image=imageUrl;
 	}
 	
 

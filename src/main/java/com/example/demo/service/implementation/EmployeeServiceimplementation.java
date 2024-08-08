@@ -5,8 +5,12 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Dto.request.EmployeeRequestDto;
@@ -21,6 +25,7 @@ import com.example.demo.model.Employee;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.interfaces.EmployeeService;
+import com.example.demo.util.Utility;
 
 import jakarta.transaction.Transactional;
 @Transactional
@@ -32,22 +37,34 @@ public class EmployeeServiceimplementation implements EmployeeService {
 	private DepartmentRepository departmentDao;
 	@Autowired
 	private ModelMapper map;
+	@Autowired
+	private Utility utility; 
+	@Autowired
+	private PasswordEncoder encoder;
 
+	@Cacheable(value = "employee",key = "#id")
 	@Override
 	public ResponseEntity<EmployeeResponseDto> getEmployee(Long id) {
 		// TODO Auto-generated method stub
 return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).orElseThrow(()->new ResourceNotFoundException("No Any Employee registered with this id :: "+id)),EmployeeResponseDto.class),HttpStatus.OK);
 		
 	}
-
+	
+	@CachePut(value = "employee",key = "#id")
 	@Override
 	public ResponseEntity<EmployeeResponseDto> updateEmployee(Long id, EmployeeRequestDto employee) {
 		// TODO Auto-generated method stub
 		Employee e=employeeDao.findById(id).orElseThrow(()->new ResourceNotFoundException("No Any Employee registered with this id :: "+id));
+		if(employee.getProfilePicture()!=null)
+		{	String imageUrl=utility.uploadImage(employee.getProfilePicture());
+		
+		e.setImage(imageUrl);
+		}
 		map.map(employee, e);
 		return new ResponseEntity<EmployeeResponseDto>(map.map(e, EmployeeResponseDto.class),HttpStatus.ACCEPTED);
 	}
-
+	
+	@CacheEvict(value = "employee",key = "#id")
 	@Override
 	public ResponseEntity<EmployeeResponseDto> removeEmployee(Long id) {
 		// TODO Auto-generated method stub
@@ -61,7 +78,7 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 		// TODO Auto-generated method stub
 		Employee emp=employeeDao.findById(id).orElseThrow(()->new ResourceNotFoundException("No Any Employee registered with this id :: "+id));
 		List<ProjectResponseDto> pList=new ArrayList<>();
-		emp.getProject().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
+		emp.getProjects().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
 		return new ResponseEntity<List<ProjectResponseDto>>(pList,HttpStatus.OK);
 	}
 
@@ -72,7 +89,9 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 	
 		//Employee emp=map.map(newEmployee, Employee.class);
 		Address address=new Address(newEmployee.getAddress(),newEmployee.getState(),newEmployee.getCountry(),newEmployee.getPinCode());
-		Employee emp=new Employee(newEmployee.getName(),newEmployee.getContactNo(),newEmployee.getDateOfBirth(),newEmployee.getDesignation(),newEmployee.getEmail(),newEmployee.getPassword(),address);
+		String imageUrl=utility.uploadImage(newEmployee.getProfilePicture());
+		Employee emp=new Employee(newEmployee.getName(),newEmployee.getContactNo(),newEmployee.getDateOfBirth(),newEmployee.getDesignation(),newEmployee.getEmail(),newEmployee.getPassword(),address,imageUrl);
+		emp.setPassword(encoder.encode(emp.getPassword()));
 		System.out.println(emp+" ... in emp service create !!");
 		dept.addEmployee(emp);
 		employeeDao.save(emp);
@@ -104,9 +123,15 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 	fEmp.setName(emp.getName());
 
 	List<ProjectResponseDto>pList=new ArrayList<>();
-	emp.getProject().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
+	emp.getProjects().forEach(p->pList.add(map.map(p, ProjectResponseDto.class)));
 	fEmp.setProject(pList);
 		return new ResponseEntity<FullEmployeeResponse>(fEmp,HttpStatus.OK);
+	}
+
+	@Override
+	public Employee getUser(String emailId) {
+		// TODO Auto-generated method stub
+		return employeeDao.findByEmail(emailId).orElseThrow(()->new ResourceNotFoundException("No any user registered with this email id ::"+emailId));
 	}
 
 }
