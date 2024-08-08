@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +50,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 	private DepartmentRepository departmentDao;
 
 	@Override
+	@Cacheable(value = "project",key = "#id")
 	public ResponseEntity<ProjectResponseDto> getProject(Long id) {
 		// TODO Auto-generated method stub
 		
@@ -74,6 +78,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 	}
 
 	@Override
+	@CachePut(value = "project",key = "#id")
 	public ResponseEntity<ProjectResponseDto> updateProject(Long id, ProjectRequestDto project) {
 		// TODO Auto-generated method stub
 		Project p=projectdao.findById(id).orElseThrow(()->new ResourceNotFoundException("No any Project registered with this id ::"+id));
@@ -82,6 +87,7 @@ public class ProjectServiceImplementation implements ProjectServices {
 	}
 
 	@Override
+	@CacheEvict(value = "project",key = "#id")
 	public ResponseEntity<ProjectResponseDto> removeProject(Long id) {
 		// TODO Auto-generated method stub
 		Project project=projectdao.findById(id).orElseThrow(()->new ResourceNotFoundException("No any Project registered with this id ::"+id));

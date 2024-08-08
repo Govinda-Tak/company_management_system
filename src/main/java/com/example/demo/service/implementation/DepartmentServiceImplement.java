@@ -7,6 +7,9 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,6 +40,7 @@ public class DepartmentServiceImplement implements DepartmentService {
 	private TypeMap<DepartmentRequestDto, Department> departmentRequestDtoToDepartmentMap;
 
 	@Override
+	@Cacheable(value = "department",key = "#id")
 	public ResponseEntity<DepartmentResponseDto> getDepartment(long id) {
 		// TODO Auto-generated method stub
 		  Department d = departmentDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + id));
@@ -45,6 +49,7 @@ public class DepartmentServiceImplement implements DepartmentService {
 	}
 
 	@Override
+	@Cacheable(value = "complete_department",key = "#id")
 	public ResponseEntity<FullDepartmentResponse> getAllDetailsOfDepartment(long id) {
 		// TODO Auto-generated method stub
 		  Department d = departmentDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + id));
@@ -68,6 +73,7 @@ public class DepartmentServiceImplement implements DepartmentService {
 	}
 
 	@Override
+	@CacheEvict(value = {"department","complete_department"},key = "#id")
 	public ResponseEntity<DepartmentResponseDto> removeDepartment(long id) {
 		// TODO Auto-generated method stub
 		Department d=departmentDao.findById(id).orElseThrow(()-> new ResourceNotFoundException("Department not found for this id :: " + id));
@@ -80,6 +86,8 @@ public class DepartmentServiceImplement implements DepartmentService {
 	}
 
 	@Override
+	@CachePut(value = {"department"},key = "#id")
+	@CacheEvict(value = "complete_department",key = "#id")
 	public ResponseEntity<DepartmentResponseDto> updateDepartment(long id, DepartmentRequestDto department) {
 		// TODO Auto-generated method stub
 		  Department d = departmentDao.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department not found for this id :: " + id));
