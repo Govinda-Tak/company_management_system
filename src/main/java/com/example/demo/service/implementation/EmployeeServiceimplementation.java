@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,13 +42,15 @@ public class EmployeeServiceimplementation implements EmployeeService {
 	@Autowired
 	private PasswordEncoder encoder;
 
+	@Cacheable(value = "employee",key = "#id")
 	@Override
 	public ResponseEntity<EmployeeResponseDto> getEmployee(Long id) {
 		// TODO Auto-generated method stub
 return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).orElseThrow(()->new ResourceNotFoundException("No Any Employee registered with this id :: "+id)),EmployeeResponseDto.class),HttpStatus.OK);
 		
 	}
-
+	
+	@CachePut(value = "employee",key = "#id")
 	@Override
 	public ResponseEntity<EmployeeResponseDto> updateEmployee(Long id, EmployeeRequestDto employee) {
 		// TODO Auto-generated method stub
@@ -58,7 +63,8 @@ return new ResponseEntity<EmployeeResponseDto>(map.map(employeeDao.findById(id).
 		map.map(employee, e);
 		return new ResponseEntity<EmployeeResponseDto>(map.map(e, EmployeeResponseDto.class),HttpStatus.ACCEPTED);
 	}
-
+	
+	@CacheEvict(value = "employee",key = "#id")
 	@Override
 	public ResponseEntity<EmployeeResponseDto> removeEmployee(Long id) {
 		// TODO Auto-generated method stub
